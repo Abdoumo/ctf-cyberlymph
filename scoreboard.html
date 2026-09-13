@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scoreboard — CyberLymph {CTF} 2027</title>
+    <meta name="description"
+        content="Regional scoreboard for CyberLymph CTF 2027. Track team rankings across Algeria, North Africa, Middle East, Europe, and International leagues.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="protect.js"></script>
+    <style>
+        /* ==========================================
+           SCOREBOARD SPECIFIC STYLES
+           ========================================== */
+
+        /* Region Tabs */
+        .region-tabs {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .region-tab {
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 8px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .region-tab:hover {
+            border-color: var(--border-hover);
+            color: var(--text-primary);
+            background: var(--bg-card-hover);
+        }
+
+        .region-tab.active {
+            background: rgba(0, 201, 167, 0.1);
+            border-color: var(--accent-teal);
+            color: var(--accent-teal);
+            box-shadow: var(--glow-teal);
+        }
+
+        .region-tab .tab-flag {
+            font-size: 1rem;
+            line-height: 1;
+        }
+
+        .region-tab .tab-count {
+            font-size: 0.65rem;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--text-muted);
+        }
+
+        .region-tab.active .tab-count {
+            background: rgba(0, 201, 167, 0.15);
+            color: var(--accent-teal);
+        }
+
+        /* Scoreboard Table */
+        .scoreboard-wrapper {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .scoreboard-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .scoreboard-table thead th {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 16px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .scoreboard-table thead th:first-child {
+            width: 60px;
+            text-align: center;
+        }
+
+        .scoreboard-table thead th:last-child {
+            text-align: right;
+        }
+
+        .scoreboard-table tbody tr {
+            transition: all 0.2s;
+            border-bottom: 1px solid rgba(0, 201, 167, 0.04);
+        }
+
+        .scoreboard-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .scoreboard-table tbody tr:hover {
+            background: rgba(0, 201, 167, 0.03);
+        }
+
+        .scoreboard-table td {
+            padding: 14px 20px;
+            font-size: 0.9rem;
+        }
+
+        .scoreboard-table td:first-child {
+            text-align: center;
+        }
+
+        .scoreboard-table td:last-child {
+            text-align: right;
+        }
+
+        /* Rank styling */
+        .rank {
+            font-family: var(--font-mono);
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .rank-1 {
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+        }
+
+        .rank-2 {
+            color: #c0c0c0;
+            text-shadow: 0 0 10px rgba(192, 192, 192, 0.3);
+        }
+
+        .rank-3 {
+            color: #cd7f32;
+            text-shadow: 0 0 10px rgba(205, 127, 50, 0.3);
+        }
+
+        /* Top 3 rows */
+        .row-top-1 {
+            background: linear-gradient(90deg, rgba(255, 215, 0, 0.04), transparent) !important;
+        }
+
+        .row-top-2 {
+            background: linear-gradient(90deg, rgba(192, 192, 192, 0.03), transparent) !important;
+        }
+
+        .row-top-3 {
+            background: linear-gradient(90deg, rgba(205, 127, 50, 0.03), transparent) !important;
+        }
+
+        /* Medal emoji */
+        .medal {
+            font-size: 1.1rem;
+            margin-right: 4px;
+        }
+
+        /* Team name */
+        .team-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .team-institution {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            display: block;
+            margin-top: 2px;
+        }
+
+        /* Score */
+        .score {
+            font-family: var(--font-mono);
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--accent-teal);
+        }
+
+        /* Solved count */
+        .solved-count {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* Last solve time */
+        .last-solve {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Region badge in table */
+        .region-badge {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            background: rgba(0, 201, 167, 0.08);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        /* Stats bar */
+        .scoreboard-stats {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .sb-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 28px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 12px;
+            min-width: 140px;
+        }
+
+        .sb-stat-value {
+            font-family: var(--font-mono);
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--accent-teal);
+        }
+
+        .sb-stat-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 4px;
+        }
+
+        /* Chart area */
+        .chart-section {
+            margin-top: 48px;
+        }
+
+        .chart-header {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+        }
+
+        .chart-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 16px;
+            padding: 24px;
+            height: 300px;
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            overflow-x: auto;
+        }
+
+        .chart-bar-group {
+            flex: 1;
+            min-width: 32px;
+            max-width: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .chart-bar {
+            width: 100%;
+            background: linear-gradient(180deg, var(--accent-teal), rgba(0, 201, 167, 0.3));
+            border-radius: 4px 4px 0 0;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            min-height: 4px;
+        }
+
+        .chart-bar:hover {
+            background: linear-gradient(180deg, var(--accent-cyan), rgba(0, 229, 255, 0.4));
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+        }
+
+        .chart-bar-label {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            writing-mode: vertical-lr;
+            text-orientation: mixed;
+            transform: rotate(180deg);
+            max-height: 80px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* No data state */
+        .no-data {
+            text-align: center;
+            padding: 60px 24px;
+            color: var(--text-muted);
+        }
+
+        .no-data-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .no-data h3 {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+
+        .no-data p {
+            font-size: 0.85rem;
+        }
+
+        /* Live indicator */
+        .live-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--accent-red);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-red);
+            border-radius: 50%;
+            animation: livePulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes livePulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                box-shadow: 0 0 0 0 rgba(255, 68, 102, 0.6);
+            }
+
+            50% {
+                opacity: 0.6;
+                box-shadow: 0 0 0 6px rgba(255, 68, 102, 0);
+            }
+        }
+
+        /* Responsive scoreboard */
+        @media (max-width: 768px) {
+            .region-tabs {
+                gap: 6px;
+            }
+
+            .region-tab {
+                padding: 8px 14px;
+                font-size: 0.7rem;
+            }
+
+            .scoreboard-table thead th,
+            .scoreboard-table td {
+                padding: 10px 12px;
+            }
+
+            .scoreboard-table .hide-mobile {
+                display: none;
+            }
+
+            .sb-stat {
+                min-width: 100px;
+                padding: 12px 16px;
+            }
+
+            .sb-stat-value {
+                font-size: 1.2rem;
+            }
+
+            .scoreboard-stats {
+                gap: 12px;
+            }
+
+            .chart-container {
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar scrolled" id="navbar">
+        <div class="nav-container">
+            <a href="../landing/index.html" class="nav-logo" id="navLogo">
+                <span class="logo-bracket">{</span>
+                <span class="logo-text">CYBER<span class="logo-accent">LYMPH</span></span>
+                <span class="logo-bracket">}</span>
+                <span class="logo-ctf">CTF</span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html" id="navChallenges">Challenges</a></li>
+                <li><a href="#" class="nav-link-active" id="navScoreboard">Scoreboard</a></li>
+                <li><a href="rules.html" id="navRules">Rules</a></li>
+                <li><a href="https://discord.gg/Q5Z4R8Xvt" target="_blank" rel="noopener" id="navDiscord">Discord</a>
+                </li>
+            </ul>
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="page-header">
+        <div class="header-bg-grid"></div>
+        <div class="header-glow"></div>
+        <div class="container">
+            <div class="header-content">
+                <div class="live-indicator">
+                    <span class="live-dot"></span>
+                    <span>Live Scoreboard</span>
+                </div>
+                <h1 class="page-title">
+                    <span class="title-bracket">{</span>Scoreboard<span class="title-bracket">}</span>
+                </h1>
+                <div class="header-partners">
+                    <span class="partner-badge-mini" id="partnerCyberlymph">
+                        <span class="pbm-bracket">{</span>CyberLymph<span class="pbm-bracket">}</span>
+                    </span>
+                    <span class="partner-sep">×</span>
+                    <span class="partner-badge-mini partner-aic" id="partnerAIC">
+                        🏛️ AIC
+                    </span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Scoreboard Content -->
+    <main class="challenges-board" id="scoreboardMain">
+        <div class="container">
+
+            <!-- Stats -->
+            <div class="scoreboard-stats" id="scoreboardStats">
+                <div class="sb-stat">
+                    <span class="sb-stat-value" id="statTeams">0</span>
+                    <span class="sb-stat-label">Teams</span>
+                </div>
+                <div class="sb-stat">
+                    <span class="sb-stat-value" id="statSolves">0</span>
+                    <span class="sb-stat-label">Total Solves</span>
+                </div>
+                <div class="sb-stat">
+                    <span class="sb-stat-value" id="statRegions">5</span>
+                    <span class="sb-stat-label">Regions</span>
+                </div>
+            </div>
+
+            <!-- Region Tabs -->
+            <div class="region-tabs" id="regionTabs"></div>
+
+            <!-- Scoreboard Table -->
+            <div class="scoreboard-wrapper">
+                <table class="scoreboard-table" id="scoreboardTable">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Team</th>
+                            <th class="hide-mobile">Region</th>
+                            <th class="hide-mobile">Solved</th>
+                            <th>Score</th>
+                        </tr>
+                    </thead>
+                    <tbody id="scoreboardBody">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Score Distribution Chart -->
+            <div class="chart-section">
+                <h3 class="chart-header">📊 Score Distribution</h3>
+                <div class="chart-container" id="chartContainer"></div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Coming Soon Overlay -->
+    <div class="coming-soon" id="comingSoon" style="display:none;">
+        <div class="container">
+            <div class="cs-content">
+                <div class="cs-icon">📊</div>
+                <h2 class="cs-title">Scoreboard <span class="cs-accent">Coming Soon</span></h2>
+                <p class="cs-desc">The scoreboard will go live when the competition starts. Check back on event day!</p>
+                <div class="cs-countdown" id="csCountdown">
+                    <div class="cs-time-item">
+                        <span class="cs-time-value" id="csDays">000</span>
+                        <span class="cs-time-label">Days</span>
+                    </div>
+                    <div class="cs-time-sep">:</div>
+                    <div class="cs-time-item">
+                        <span class="cs-time-value" id="csHours">00</span>
+                        <span class="cs-time-label">Hours</span>
+                    </div>
+                    <div class="cs-time-sep">:</div>
+                    <div class="cs-time-item">
+                        <span class="cs-time-value" id="csMinutes">00</span>
+                        <span class="cs-time-label">Minutes</span>
+                    </div>
+                    <div class="cs-time-sep">:</div>
+                    <div class="cs-time-item">
+                        <span class="cs-time-value" id="csSeconds">00</span>
+                        <span class="cs-time-label">Seconds</span>
+                    </div>
+                </div>
+                <div class="cs-date">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    <span>November 12, 2027</span>
+                </div>
+                <a href="../landing/index.html" class="cs-btn">← Back to Event Page</a>
+
+                <!-- Admin Login -->
+                <div class="cs-admin-login" id="csAdminLogin">
+                    <button class="cs-admin-toggle" id="csAdminToggle">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        Organizer Access
+                    </button>
+                    <div class="cs-login-form" id="csLoginForm" style="display:none;">
+                        <input type="email" id="loginEmail" class="cs-login-input" placeholder="Email" autocomplete="email" spellcheck="false">
+                        <input type="password" id="loginPassword" class="cs-login-input" placeholder="Password" autocomplete="current-password">
+                        <button class="cs-login-btn" id="loginBtn">Login</button>
+                        <div class="cs-login-error" id="loginError"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // REGIONAL SCOREBOARD DATA
+        // ==========================================
+        const regions = [
+            { id: 'all', name: 'All Regions', flag: '🌍', short: 'ALL' },
+            { id: 'algeria', name: 'Algeria', flag: '🇩🇿', short: 'DZ' },
+            { id: 'north-africa', name: 'North Africa', flag: '🌅', short: 'NA' },
+            { id: 'middle-east', name: 'Middle East', flag: '🕌', short: 'ME' },
+            { id: 'europe', name: 'Europe', flag: '🇪🇺', short: 'EU' },
+            { id: 'international', name: 'International', flag: '🌐', short: 'INT' },
+        ];
+
+        // Sample team data (demo — replace with real API data)
+        const teams = [
+            { name: "CyberPhantoms", institution: "USTHB Algiers", region: "algeria", score: 2450, solved: 18, lastSolve: "2h ago" },
+            { name: "ByteStorm", institution: "ESI Algiers", region: "algeria", score: 2100, solved: 15, lastSolve: "1h ago" },
+            { name: "NullPointers", institution: "Univ. Annaba", region: "algeria", score: 1850, solved: 14, lastSolve: "30m ago" },
+            { name: "DarkCircuit", institution: "Univ. Constantine", region: "algeria", score: 1600, solved: 12, lastSolve: "3h ago" },
+            { name: "HexHunters", institution: "Univ. Oran", region: "algeria", score: 1350, solved: 10, lastSolve: "4h ago" },
+            { name: "ShadowByte", institution: "ENSI Tunis", region: "north-africa", score: 2200, solved: 16, lastSolve: "45m ago" },
+            { name: "PhoenixSec", institution: "ENSA Marrakech", region: "north-africa", score: 1900, solved: 14, lastSolve: "2h ago" },
+            { name: "RedTeam_LY", institution: "Univ. Tripoli", region: "north-africa", score: 1100, solved: 8, lastSolve: "5h ago" },
+            { name: "CyberWolves", institution: "Univ. Cairo", region: "north-africa", score: 1750, solved: 13, lastSolve: "1h ago" },
+            { name: "SandStorm", institution: "KAUST", region: "middle-east", score: 2350, solved: 17, lastSolve: "20m ago" },
+            { name: "BinBreakers", institution: "AUS Dubai", region: "middle-east", score: 1500, solved: 11, lastSolve: "3h ago" },
+            { name: "ZeroDayZ", institution: "Bilkent Univ.", region: "middle-east", score: 1950, solved: 15, lastSolve: "1h ago" },
+            { name: "0xDEADBEEF", institution: "ETH Zurich", region: "europe", score: 2600, solved: 19, lastSolve: "15m ago" },
+            { name: "CrackForce", institution: "TU Munich", region: "europe", score: 2000, solved: 15, lastSolve: "2h ago" },
+            { name: "PWN_Masters", institution: "INSA Lyon", region: "europe", score: 1700, solved: 13, lastSolve: "4h ago" },
+            { name: "Rev3nge", institution: "Politecnico Milano", region: "europe", score: 1400, solved: 10, lastSolve: "6h ago" },
+            { name: "CTF_Warriors", institution: "NUS Singapore", region: "international", score: 2500, solved: 18, lastSolve: "30m ago" },
+            { name: "RootShell", institution: "MIT", region: "international", score: 2300, solved: 17, lastSolve: "1h ago" },
+            { name: "Exploit_Dev", institution: "Univ. Tokyo", region: "international", score: 1800, solved: 14, lastSolve: "3h ago" },
+            { name: "FlagHunters", institution: "IIT Bombay", region: "international", score: 1550, solved: 11, lastSolve: "5h ago" },
+        ];
+
+        let activeRegion = 'all';
+
+        // ==========================================
+        // RENDER REGION TABS
+        // ==========================================
+        const tabsContainer = document.getElementById('regionTabs');
+
+        regions.forEach(region => {
+            const count = region.id === 'all' ? teams.length : teams.filter(t => t.region === region.id).length;
+            const tab = document.createElement('button');
+            tab.className = `region-tab ${region.id === 'all' ? 'active' : ''}`;
+            tab.dataset.region = region.id;
+            tab.id = `tab-${region.id}`;
+            tab.innerHTML = `
+                <span class="tab-flag">${region.flag}</span>
+                <span>${region.short}</span>
+                <span class="tab-count">${count}</span>
+            `;
+            tab.addEventListener('click', () => switchRegion(region.id));
+            tabsContainer.appendChild(tab);
+        });
+
+        function switchRegion(regionId) {
+            activeRegion = regionId;
+            document.querySelectorAll('.region-tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`[data-region="${regionId}"]`).classList.add('active');
+            renderScoreboard();
+            renderChart();
+            updateStats();
+        }
+
+        // ==========================================
+        // RENDER SCOREBOARD
+        // ==========================================
+        function renderScoreboard() {
+            const tbody = document.getElementById('scoreboardBody');
+            const filtered = activeRegion === 'all'
+                ? [...teams]
+                : teams.filter(t => t.region === activeRegion);
+
+            filtered.sort((a, b) => b.score - a.score);
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr><td colspan="5">
+                        <div class="no-data">
+                            <div class="no-data-icon">🏜️</div>
+                            <h3>No teams yet</h3>
+                            <p>No teams have registered for this region yet.</p>
+                        </div>
+                    </td></tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map((team, i) => {
+                const rank = i + 1;
+                const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '';
+                const rankClass = rank <= 3 ? `rank-${rank}` : '';
+                const rowClass = rank <= 3 ? `row-top-${rank}` : '';
+                const regionInfo = regions.find(r => r.id === team.region);
+
+                return `
+                    <tr class="${rowClass}">
+                        <td>
+                            ${medal ? `<span class="medal">${medal}</span>` : ''}
+                            <span class="rank ${rankClass}">${rank}</span>
+                        </td>
+                        <td>
+                            <span class="team-name">${team.name}</span>
+                            <span class="team-institution">${team.institution}</span>
+                        </td>
+                        <td class="hide-mobile">
+                            <span class="region-badge">${regionInfo ? regionInfo.flag : '🌍'} ${regionInfo ? regionInfo.short : ''}</span>
+                        </td>
+                        <td class="hide-mobile">
+                            <span class="solved-count">${team.solved} / 28</span>
+                        </td>
+                        <td>
+                            <span class="score">${team.score.toLocaleString()}</span>
+                            <span class="last-solve" style="display:block;margin-top:2px;">${team.lastSolve}</span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // ==========================================
+        // RENDER CHART
+        // ==========================================
+        function renderChart() {
+            const container = document.getElementById('chartContainer');
+            const filtered = activeRegion === 'all'
+                ? [...teams]
+                : teams.filter(t => t.region === activeRegion);
+
+            filtered.sort((a, b) => b.score - a.score);
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="no-data" style="width:100%;display:flex;align-items:center;justify-content:center;"><p>No data to display</p></div>';
+                return;
+            }
+
+            const maxScore = Math.max(...filtered.map(t => t.score));
+
+            container.innerHTML = filtered.map(team => {
+                const heightPct = (team.score / maxScore) * 100;
+                return `
+                    <div class="chart-bar-group" title="${team.name}: ${team.score} pts">
+                        <div class="chart-bar" style="height: ${heightPct}%;"></div>
+                        <span class="chart-bar-label">${team.name}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ==========================================
+        // UPDATE STATS
+        // ==========================================
+        function updateStats() {
+            const filtered = activeRegion === 'all'
+                ? teams
+                : teams.filter(t => t.region === activeRegion);
+
+            document.getElementById('statTeams').textContent = filtered.length;
+            document.getElementById('statSolves').textContent = filtered.reduce((sum, t) => sum + t.solved, 0);
+        }
+
+        // ==========================================
+        // DATE GATE — Nov 12, 2027 09:00 AM
+        // ==========================================
+        const EVENT_DATE = new Date('2027-11-12T09:00:00').getTime();
+        const adminAuth = localStorage.getItem('ctf_admin_auth');
+        const isLive = Date.now() >= EVENT_DATE || adminAuth === 'granted';
+
+        const scoreboardMain = document.getElementById('scoreboardMain');
+        const comingSoon = document.getElementById('comingSoon');
+
+        if (!isLive) {
+            scoreboardMain.style.display = 'none';
+            comingSoon.style.display = 'block';
+
+            function updateCsCountdown() {
+                const diff = EVENT_DATE - Date.now();
+                if (diff <= 0) { location.reload(); return; }
+                const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                const m = Math.floor((diff / (1000 * 60)) % 60);
+                const s = Math.floor((diff / 1000) % 60);
+                document.getElementById('csDays').textContent = String(d).padStart(3, '0');
+                document.getElementById('csHours').textContent = String(h).padStart(2, '0');
+                document.getElementById('csMinutes').textContent = String(m).padStart(2, '0');
+                document.getElementById('csSeconds').textContent = String(s).padStart(2, '0');
+            }
+            updateCsCountdown();
+            setInterval(updateCsCountdown, 1000);
+        }
+
+        // ==========================================
+        // INITIAL RENDER (only if live)
+        // ==========================================
+        if (isLive) {
+            renderScoreboard();
+            renderChart();
+            updateStats();
+        }
+
+        // ==========================================
+        // NAVBAR
+        // ==========================================
+        const mobileToggle = document.getElementById('mobileToggle');
+        const navLinks = document.getElementById('navLinks');
+        mobileToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            mobileToggle.classList.toggle('active');
+        });
+
+        // ==========================================
+        // ADMIN LOGIN (organizer bypass)
+        // ==========================================
+        const adminToggle = document.getElementById('csAdminToggle');
+        const loginFormEl = document.getElementById('csLoginForm');
+        const loginBtnEl = document.getElementById('loginBtn');
+        const loginErrorEl = document.getElementById('loginError');
+
+        if (adminToggle) {
+            adminToggle.addEventListener('click', () => {
+                loginFormEl.style.display = loginFormEl.style.display === 'none' ? 'flex' : 'none';
+            });
+        }
+
+        if (loginBtnEl) {
+            loginBtnEl.addEventListener('click', () => {
+                const email = document.getElementById('loginEmail').value.trim();
+                const pass = document.getElementById('loginPassword').value;
+                if (email === atob('YmVkb3VzaG9wQGdtYWlsLmNvbQ==') && pass === atob('c2RmMTIz')) {
+                    localStorage.setItem('ctf_admin_auth', 'granted');
+                    location.reload();
+                } else {
+                    loginErrorEl.textContent = '✗ Invalid credentials';
+                    loginErrorEl.style.display = 'block';
+                }
+            });
+
+            document.getElementById('loginPassword')?.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') loginBtnEl.click();
+            });
+        }
+    </script>
+</body>
+
+</html>

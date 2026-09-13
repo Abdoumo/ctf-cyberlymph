@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rules — CyberLymph {CTF} 2027</title>
+    <meta name="description"
+        content="Official rules for the CyberLymph CTF 2027 cybersecurity competition. Regional leagues, team registration, flag format, and code of conduct.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="protect.js"></script>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar scrolled" id="navbar">
+        <div class="nav-container">
+            <a href="../landing/index.html" class="nav-logo" id="navLogo">
+                <span class="logo-bracket">{</span>
+                <span class="logo-text">CYBER<span class="logo-accent">LYMPH</span></span>
+                <span class="logo-bracket">}</span>
+                <span class="logo-ctf">CTF</span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html" id="navChallenges">Challenges</a></li>
+                <li><a href="scoreboard.html" id="navScoreboard">Scoreboard</a></li>
+                <li><a href="#" class="nav-link-active" id="navRules">Rules</a></li>
+                <li><a href="https://discord.gg/Q5Z4R8Xvt" target="_blank" rel="noopener" id="navDiscord">Discord</a>
+                </li>
+            </ul>
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="page-header">
+        <div class="header-bg-grid"></div>
+        <div class="header-glow"></div>
+        <div class="container">
+            <div class="header-content">
+                <div class="header-partners">
+                    <span class="partner-badge-mini" id="partnerCyberlymph">
+                        <span class="pbm-bracket">{</span>CyberLymph<span class="pbm-bracket">}</span>
+                    </span>
+                    <span class="partner-sep">×</span>
+                    <span class="partner-badge-mini partner-aic" id="partnerAIC">
+                        🏛️ AIC
+                    </span>
+                </div>
+                <h1 class="page-title">
+                    <span class="title-bracket">{</span>Rules<span class="title-bracket">}</span>
+                </h1>
+            </div>
+        </div>
+    </header>
+
+    <!-- Rules Content -->
+    <main class="rules-section">
+        <div class="container">
+
+            <!-- Highlight Cards -->
+            <div class="rules-grid">
+                <div class="rules-card rules-discord">
+                    <div class="rules-card-icon">💬</div>
+                    <h3>Communication</h3>
+                    <p>We use <a href="https://discord.gg/Q5Z4R8Xvt" target="_blank" rel="noopener"
+                            class="rules-link">Discord</a> for communication and announcements.</p>
+                    <p class="rules-warning">⚠️ If you have questions regarding tasks or infrastructure, send them via
+                        the ticket system on our Discord server. <strong>Do not post task-related questions in public
+                            channels.</strong></p>
+                </div>
+
+                <div class="rules-card">
+                    <div class="rules-card-icon">🌍</div>
+                    <h3>Regional Leagues</h3>
+                    <p>The competition is held in <strong>independent regional leagues</strong>, each with their own
+                        scoreboard. The main event takes place in <strong>Algeria</strong>, but participants from all
+                        regions are welcome to join.</p>
+                </div>
+            </div>
+
+            <!-- Numbered Rules -->
+            <div class="rules-list-container">
+                <div class="rules-list">
+                    <div class="rule-item">
+                        <span class="rule-number">01</span>
+                        <div class="rule-content">
+                            <h4>Team Registration</h4>
+                            <p>Team registration must be done by the <strong>team captain only</strong>, who must verify
+                                the team's status via an email address or applicable document.</p>
+                        </div>
+                    </div>
+                    <div class="rule-item">
+                        <span class="rule-number">02</span>
+                        <div class="rule-content">
+                            <h4>One Team Per Player</h4>
+                            <p>Each player may only participate in <strong>one team</strong>. No multi-team
+                                participation allowed.</p>
+                        </div>
+                    </div>
+                    <div class="rule-item">
+                        <span class="rule-number">03</span>
+                        <div class="rule-content">
+                            <h4>Team Size</h4>
+                            <p>The number of players in a single team is <strong>not limited</strong> for the online
+                                competition.</p>
+                        </div>
+                    </div>
+                    <div class="rule-item">
+                        <span class="rule-number">04</span>
+                        <div class="rule-content">
+                            <h4>Shared Account</h4>
+                            <p>You need to share <strong>one team account</strong> to access the competition platform.
+                                Your captain will receive login details before the competition starts.</p>
+                        </div>
+                    </div>
+                    <div class="rule-item">
+                        <span class="rule-number">05</span>
+                        <div class="rule-content">
+                            <h4>No Attacking Infrastructure</h4>
+                            <p>Competitors are <strong>not allowed</strong> to attack other teams or the competition
+                                infrastructure.</p>
+                        </div>
+                    </div>
+                    <div class="rule-item">
+                        <span class="rule-number">06</span>
+                        <div class="rule-content">
+                            <h4>No Automated Scanners</h4>
+                            <p>The use of automated scanners or tools that would <strong>overwhelm the
+                                    infrastructure</strong> is prohibited.</p>
+                        </div>
+                    </div>
+                    <div class="rule-item">
+                        <span class="rule-number">07</span>
+                        <div class="rule-content">
+                            <h4>Flag Format</h4>
+                            <p>The flag format is <code>CyberLymph{fl4g_h3r3}</code>, unless explicitly specified in the
+                                challenge description.</p>
+                        </div>
+                    </div>
+                    <div class="rule-item">
+                        <span class="rule-number">08</span>
+                        <div class="rule-content">
+                            <h4>No Sharing</h4>
+                            <p>Sharing flags, hints, solutions, or any challenge-related information between different
+                                teams or in public sources is <strong>strictly prohibited</strong>.</p>
+                        </div>
+                    </div>
+                    <div class="rule-item">
+                        <span class="rule-number">09</span>
+                        <div class="rule-content">
+                            <h4>Respect</h4>
+                            <p>Participants must remain respectful and refrain from using inappropriate language on the
+                                competition platform or in official communication channels.</p>
+                        </div>
+                    </div>
+                    <div class="rule-item">
+                        <span class="rule-number">10</span>
+                        <div class="rule-content">
+                            <h4>Organizer Rights</h4>
+                            <p>Organizers may extend or modify the ruleset at any time. Organizers reserve the right to
+                                <strong>temporarily ban or disqualify</strong> any team suspected of breaking the rules.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // Mobile menu
+        const mobileToggle = document.getElementById('mobileToggle');
+        const navLinks = document.getElementById('navLinks');
+        mobileToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            mobileToggle.classList.toggle('active');
+        });
+    </script>
+</body>
+
+</html>
